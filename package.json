@@ -7,6 +7,8 @@
     "lint": "eslint \"{config,src,test}/**/*.ts\" --fix",
     "start": "node build/src/index.js",
     "start:dev": "ts-node-dev src/index.ts",
+    "docker:up": "docker compose up -d --build",
+    "docker:down": "docker compose down",
     "test": "NODE_ENV=test jest --verbose"
   },
   "keywords": [
