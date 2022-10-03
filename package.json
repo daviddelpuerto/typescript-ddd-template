@@ -7,7 +7,7 @@
     "lint": "eslint \"{config,src,test}/**/*.ts\" --fix",
     "start": "node build/src/index.js",
     "start:dev": "ts-node-dev src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "NODE_ENV=test jest --verbose"
   },
   "keywords": [
     "node",
