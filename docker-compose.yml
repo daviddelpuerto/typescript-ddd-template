@@ -1,0 +1,13 @@
+version: '3.4'
+
+services:
+    
+  node:
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      NODE_PORT: ${NODE_PORT}
+    networks:
+      - node_app
+
+networks: 
+  node_app:

@@ -1,0 +1,13 @@
+version: '3.4'
+
+services:
+
+  node:
+    build:
+      args:
+        NODE_ENV: ${NODE_ENV}
+      context: .
+      dockerfile: docker/node/Dockerfile.dev
+    volumes:
+      - .:/app
+    command: npm run start:dev
