@@ -1,0 +1,3 @@
+imports:
+  - { resource: ./Shared/dependencies.yaml }
+  - { resource: ./app/controllers/dependencies.yaml }

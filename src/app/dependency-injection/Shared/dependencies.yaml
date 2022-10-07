@@ -1,0 +1,3 @@
+services:
+  Shared.Logger:
+    class: ../../../Shared/infrastructure/Logger

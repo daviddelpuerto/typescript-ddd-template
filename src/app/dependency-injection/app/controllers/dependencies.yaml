@@ -1,0 +1,3 @@
+services:
+  App.Controllers.GetStatusController:
+    class: ../../../routes/api/GetStatusController

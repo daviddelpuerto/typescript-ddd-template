@@ -1,14 +1,16 @@
-import { Container } from 'typedi';
-import dependencies from './dependencies';
+import { ContainerBuilder, YamlFileLoader } from 'node-dependency-injection';
 import Logger from '../../Shared/infrastructure/Logger';
 
-const logger = new Logger('Dependency-Injection');
+export const container = new ContainerBuilder();
+const loader = new YamlFileLoader(container);
 
-export default function injectDependencies() {
+export default async function injectDependencies(): Promise<void> {
+  const logger = new Logger('Dependency-Injection');
+
   logger.info('💉 Starting dependency injection');
 
-  Object.entries(dependencies).forEach(([key, value]) => {
-    Container.set(key, value);
-    logger.info(`✔️  Registered {${key}}`);
-  });
+  const applicationDependenciesFile = `${__dirname}/application.dependencies.yaml`;
+  await loader.load(applicationDependenciesFile);
+
+  logger.info('✔️  Loaded dependencies on container');
 }
