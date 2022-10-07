@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import httpStatus from 'http-status-codes';
-import Controller from '../../Shared/infrastructure/Controller';
+import Controller from '../../../Shared/infrastructure/Controller';
 
 
-export default class StatusGetController implements Controller {
+export default class GetStatusController implements Controller {
 
   async run(_req: Request, res: Response) {
     try {
