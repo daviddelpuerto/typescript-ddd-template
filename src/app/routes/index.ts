@@ -1,8 +1,19 @@
 import { Router } from 'express';
-import apiRouter from './api.router';
+import glob from 'glob';
+import Logger from '../../Shared/infrastructure/Logger';
 
-const router = Router();
+function register(routeFilePath: string, app: Router) {
+  const route = require(routeFilePath);
+  route.register(app);
+}
 
-router.use('/api', apiRouter);
+export function registerRoutes(router: Router) {
+  const logger = new Logger('Router');
 
-export default router;
+  logger.info('Registering application routes');
+
+  const routesFiles = glob.sync(__dirname + './**/*.route.*');
+  routesFiles.map(route => register(route, router));
+
+  logger.info('✔️  Application routes have been registered');
+}
