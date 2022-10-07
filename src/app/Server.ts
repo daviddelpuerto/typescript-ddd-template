@@ -1,13 +1,15 @@
 import compress from 'compression';
-import express, { Express } from 'express';
+import express, { Express, Router } from 'express';
 import helmet from 'helmet';
 import * as http from 'http';
-import router from './routes';
+import { registerRoutes } from './routes';
 import loggerMiddleware from './middlewares/logger.middleware';
 import Logger from '../Shared/domain/Logger';
 
 export class Server {
   private express: Express;
+
+  private readonly router: Router;
 
   readonly port: string;
 
@@ -17,6 +19,7 @@ export class Server {
     this.port = port;
     this.logger = logger;
     this.express = express();
+    this.router = Router();
     this.express.use(express.json());
     this.express.use(express.urlencoded({ extended: true }));
     this.express.use(helmet.xssFilter());
@@ -25,7 +28,9 @@ export class Server {
     this.express.use(helmet.frameguard({ action: 'deny' }));
     this.express.use(compress());
     this.express.use(loggerMiddleware);
-    this.express.use(router);
+    this.express.use(this.router);
+
+    registerRoutes(this.router);
   }
 
   async listen(): Promise<void> {
