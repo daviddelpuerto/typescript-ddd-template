@@ -1,2 +1,1 @@
-import './Shared/infrastructure/bootstrap';
-import './app/start';
+import './main';
