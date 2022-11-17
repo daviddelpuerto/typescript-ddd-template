@@ -7,12 +7,20 @@ function register(routeFilePath: string, app: Router) {
   route.register(app);
 }
 
+function getProjectPath() {
+  return __dirname.replace('/src/app/routes', '');
+}
+
 export function registerRoutes(router: Router) {
   const logger = new Logger('Router');
 
   logger.info('Registering application routes');
 
-  const routesFiles = glob.sync(__dirname + './**/*.route.*');
+  const projectPath = getProjectPath();
+  const routesFiles = glob.sync(`${projectPath}/**/*.route.*`);
+
+  logger.info(`Found ${routesFiles.length} routes files`);
+
   routesFiles.map(route => register(route, router));
 
   logger.info('✔️  Application routes have been registered');
