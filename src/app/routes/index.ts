@@ -3,8 +3,7 @@ import glob from 'glob';
 import Logger from '../../Shared/infrastructure/Logger';
 
 function register(routeFilePath: string, app: Router) {
-  const route = require(routeFilePath);
-  route.register(app);
+  import(routeFilePath).then((route) => route.register(app));
 }
 
 function getProjectPath() {
@@ -20,8 +19,7 @@ export function registerRoutes(router: Router) {
   const routesFiles = glob.sync(`${projectPath}/**/*.route.*`);
 
   logger.info(`Found ${routesFiles.length} routes files`);
-
-  routesFiles.map(route => register(route, router));
+  routesFiles.map((route) => register(route, router));
 
   logger.info('✔️  Application routes have been registered');
 }

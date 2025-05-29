@@ -15,7 +15,10 @@ export class Server {
 
   httpServer?: http.Server;
 
-  constructor(port: string, private logger: Logger) {
+  constructor(
+    port: string,
+    private logger: Logger,
+  ) {
     this.port = port;
     this.logger = logger;
     this.express = express();
@@ -47,7 +50,7 @@ export class Server {
   async stop(): Promise<void> {
     return new Promise((resolve, reject) => {
       if (this.httpServer) {
-        this.httpServer.close(error => {
+        this.httpServer.close((error) => {
           if (error) {
             return reject(error);
           }

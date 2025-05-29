@@ -1,4 +1,3 @@
-import '../../src/Shared/infrastructure/bootstrap';
 import { Server } from '../../src/app/Server';
 import request from 'supertest';
 import Logger from '../../src/Shared/infrastructure/Logger';
@@ -17,7 +16,5 @@ afterAll(async () => {
 });
 
 test('Sending a GET request to the root endpoint returns status code 200', async () => {
-  await request(server.httpServer)
-    .get('/api')
-    .expect(200);
+  await request(server.httpServer).get('/api').expect(200);
 });

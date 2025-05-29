@@ -29,7 +29,10 @@ export default class SharedLogger implements Logger {
       format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.colorize({ all: true }),
-        winston.format.printf((log) => `${log.timestamp} [${log.level}] ${this.name ? `[${this.name}] ` : ''}${log.message}`),
+        winston.format.printf(
+          (log) =>
+            `${log.timestamp} [${log.level}] ${this.name ? `[${this.name}] ` : ''}${log.message}`,
+        ),
       ),
       transports: [
         new winston.transports.Console(),
@@ -54,8 +57,10 @@ export default class SharedLogger implements Logger {
     this.logger.http(message);
   }
 
-  error(message: string | Error) {
-    /* eslint-disable-next-line @typescript-eslint/no-unused-expressions */
-    message instanceof Error ? this.logger.error(message.stack) : this.logger.error(message);
+  error(error: string | Error | unknown) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    error instanceof Error
+      ? this.logger.error(error.stack ?? error.message)
+      : this.logger.error(error);
   }
 }

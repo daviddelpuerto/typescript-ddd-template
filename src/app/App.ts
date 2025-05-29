@@ -17,7 +17,7 @@ export default class App {
   async start(): Promise<void> {
     try {
       await this.server.listen().catch(this.handleError);
-    } catch (error: any) {
+    } catch (error) {
       this.handleError(error);
     }
   }
@@ -26,7 +26,7 @@ export default class App {
     await this.server.stop();
   }
 
-  handleError(err: Error): void {
+  handleError(err: Error | unknown): void {
     this.logger.error(err);
     process.exit(1);
   }
