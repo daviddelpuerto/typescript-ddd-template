@@ -2,22 +2,19 @@ import compress from 'compression';
 import express, { Express, Router } from 'express';
 import helmet from 'helmet';
 import * as http from 'http';
-import { registerRoutes } from './routes';
+import { glob } from 'glob';
 import loggerMiddleware from './middlewares/logger.middleware';
 import Logger from '../Shared/domain/Logger';
 
 export class Server {
-  private express: Express;
-
+  private readonly express: Express;
   private readonly router: Router;
-
-  readonly port: string;
 
   httpServer?: http.Server;
 
   constructor(
-    port: string,
-    private logger: Logger,
+    private readonly port: string,
+    private readonly logger: Logger,
   ) {
     this.port = port;
     this.logger = logger;
@@ -32,22 +29,39 @@ export class Server {
     this.express.use(compress());
     this.express.use(loggerMiddleware);
     this.express.use(this.router);
+  }
 
-    registerRoutes(this.router);
+  private async registerRoutes(): Promise<void> {
+    this.logger.info('Registering routes');
+
+    const routesRootPath = __dirname.replace('/src/app/routes', '');
+    const routeFiles = glob.sync(`${routesRootPath}/**/*.route.*`);
+    this.logger.info(`Found ${routeFiles.length} route files`);
+
+    for (const file of routeFiles) {
+      try {
+        const routeModule = await import(file);
+        routeModule.register(this.router);
+      } catch (error) {
+        this.logger.error(`Failed to load route ${file}: ${error}`);
+      }
+    }
+
+    this.logger.info('✔️  Application routes have been registered');
   }
 
   async listen(): Promise<void> {
+    await this.registerRoutes();
     return new Promise((resolve) => {
       this.httpServer = this.express.listen(this.port, () => {
         this.logger.info(`🚀 Server listening on port: [${this.port}]`);
         this.logger.info(`   Running environment: [${this.express.get('env')}]`);
-        this.logger.info('      Press CTRL-C to stop\n');
         resolve();
       });
     });
   }
 
-  async stop(): Promise<void> {
+  stop(): Promise<void> {
     return new Promise((resolve, reject) => {
       if (this.httpServer) {
         this.httpServer.close((error) => {

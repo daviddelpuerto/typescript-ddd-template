@@ -1,7 +1,7 @@
 import winston, { Logger as WinstonLoggerType } from 'winston';
 import Logger from '../domain/Logger';
 
-export default class SharedLogger implements Logger {
+export class SharedLogger implements Logger {
   private logger: WinstonLoggerType;
 
   readonly level = 'debug';

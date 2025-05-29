@@ -1,5 +1,5 @@
 import morgan from 'morgan';
-import Logger from '../../Shared/infrastructure/Logger';
+import { SharedLogger as Logger } from '../../Shared/infrastructure/Logger';
 
 const logger = new Logger();
 

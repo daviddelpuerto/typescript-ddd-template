@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import glob from 'glob';
-import Logger from '../../Shared/infrastructure/Logger';
+import { SharedLogger as Logger } from '../../Shared/infrastructure/Logger';
 
 function register(routeFilePath: string, app: Router) {
   import(routeFilePath).then((route) => route.register(app));
