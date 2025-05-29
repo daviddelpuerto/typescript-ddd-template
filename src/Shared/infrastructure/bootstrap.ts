@@ -1,5 +1,4 @@
 import Logger from './Logger';
-import loadEnvConfig from '../../../config';
 import injectDependencies from '../../app/dependency-injection';
 
 export default async function boostrap() {
@@ -7,7 +6,6 @@ export default async function boostrap() {
 
   logger.info('🚧 Starting boostrap process');
 
-  loadEnvConfig();
   await injectDependencies();
 
   logger.info('🏁 Finished bootsrap process');

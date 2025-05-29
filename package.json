@@ -4,9 +4,9 @@
   "description": "Nodejs typescript starter project following DDD principles and best practices with docker setup ready to go",
   "scripts": {
     "build": "tsc",
-    "lint": "eslint \"{config,src,test}/**/*.ts\" --fix",
-    "start": "node build/src/index.js",
-    "start:dev": "ts-node-dev src/index.ts",
+    "lint": "eslint \"{src,test}/**/*.ts\" --fix",
+    "start": "node --env-file=.env -r build/src/index.js",
+    "start:dev": "node --env-file=.env -r ts-node/register src/index.ts",
     "docker:up": "docker compose up -d --build",
     "docker:down": "docker compose down",
     "test": "NODE_ENV=test jest --verbose"
@@ -24,7 +24,6 @@
   "license": "ISC",
   "dependencies": {
     "compression": "^1.7.4",
-    "dotenv": "^16.0.2",
     "express": "^5.1.0",
     "glob": "^8.0.3",
     "helmet": "^6.0.0",
