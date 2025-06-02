@@ -34,14 +34,17 @@ export class SharedLogger implements Logger {
             `${log.timestamp} [${log.level}] ${this.name ? `[${this.name}] ` : ''}${log.message}`,
         ),
       ),
-      transports: [
-        new winston.transports.Console(),
-        new winston.transports.File({
-          filename: 'logs/error.log',
-          level: 'error',
-        }),
-        new winston.transports.File({ filename: 'logs/access.log' }),
-      ],
+      transports:
+        process.env.NODE_ENV !== 'test'
+          ? [
+              new winston.transports.Console(),
+              new winston.transports.File({
+                filename: 'logs/error.log',
+                level: 'error',
+              }),
+              new winston.transports.File({ filename: 'logs/access.log' }),
+            ]
+          : [],
     });
   }
 

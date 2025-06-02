@@ -10,7 +10,7 @@
     "start:dev": "node --env-file=.env -r ts-node/register src/index.ts",
     "docker:up": "docker compose up -d --build",
     "docker:down": "docker compose down",
-    "test": "NODE_ENV=test jest --verbose"
+    "test": "NODE_ENV=test jest --silent"
   },
   "keywords": [
     "node",
