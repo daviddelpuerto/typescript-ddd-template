@@ -1,14 +1,16 @@
-import { Server } from '../../src/app/Server';
 import request from 'supertest';
-import Logger from '../../src/Shared/infrastructure/Logger';
+import { Server } from '../../src/app/Server';
+import { SharedLogger as Logger } from '../../src/Shared/infrastructure/Logger';
+import { injectDependencies } from '../../src/app/dependency-injection';
 
 const logger = new Logger('Test-App');
-
 const port = process.env.NODE_PORT || '3000';
-const server = new Server(port, logger);
+
+const server = new Server({ port, logger });
 
 beforeAll(async () => {
-  await server.listen();
+  await injectDependencies();
+  await server.run();
 });
 
 afterAll(async () => {
