@@ -15,4 +15,4 @@ const stream = {
   },
 };
 
-export default morgan(format, { stream });
+export const loggerMiddleware = morgan(format, { stream });

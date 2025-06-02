@@ -3,23 +3,32 @@ import express, { Express, Router } from 'express';
 import helmet from 'helmet';
 import * as http from 'http';
 import { glob } from 'glob';
-import loggerMiddleware from './middlewares/logger.middleware';
+import { loggerMiddleware } from './middlewares/logger.middleware';
 import Logger from '../Shared/domain/Logger';
+
+interface ServerOptions {
+  port: string;
+  logger: Logger;
+  routesPath?: string;
+}
 
 export class Server {
   private readonly express: Express;
   private readonly router: Router;
+  private readonly logger: Logger;
+  private readonly port: string;
+  private readonly routesPath: string;
 
   httpServer?: http.Server;
 
-  constructor(
-    private readonly port: string,
-    private readonly logger: Logger,
-  ) {
-    this.port = port;
-    this.logger = logger;
+  constructor(options: ServerOptions) {
+    this.logger = options.logger;
+    this.port = options.port;
+    this.routesPath = options.routesPath ?? './src/app/routes';
+
     this.express = express();
     this.router = Router();
+
     this.express.use(express.json());
     this.express.use(express.urlencoded({ extended: true }));
     this.express.use(helmet.xssFilter());
@@ -27,31 +36,30 @@ export class Server {
     this.express.use(helmet.hidePoweredBy());
     this.express.use(helmet.frameguard({ action: 'deny' }));
     this.express.use(compress());
+
     this.express.use(loggerMiddleware);
+
     this.express.use(this.router);
+    this.registerRoutes();
   }
 
   private async registerRoutes(): Promise<void> {
     this.logger.info('Registering routes');
 
-    const routesRootPath = __dirname.replace('/src/app/routes', '');
+    const routesRootPath = __dirname.replace(this.routesPath, '');
     const routeFiles = glob.sync(`${routesRootPath}/**/*.route.*`);
     this.logger.info(`Found ${routeFiles.length} route files`);
 
-    for (const file of routeFiles) {
-      try {
-        const routeModule = await import(file);
-        routeModule.register(this.router);
-      } catch (error) {
-        this.logger.error(`Failed to load route ${file}: ${error}`);
-      }
-    }
+    routeFiles.forEach((file) =>
+      import(file)
+        .then((route) => route.register(this.router))
+        .catch((error: Error) => this.logger.error(`Failed to load route ${file}: ${error}`)),
+    );
 
     this.logger.info('✔️  Application routes have been registered');
   }
 
-  async listen(): Promise<void> {
-    await this.registerRoutes();
+  listen(): Promise<void> {
     return new Promise((resolve) => {
       this.httpServer = this.express.listen(this.port, () => {
         this.logger.info(`🚀 Server listening on port: [${this.port}]`);

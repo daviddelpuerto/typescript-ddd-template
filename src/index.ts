@@ -4,14 +4,28 @@ import { SharedLogger as Logger } from './Shared/infrastructure/Logger';
 
 const logger = new Logger('App');
 
+process.on('unhandledRejection', (reason) => {
+  logger.error(`Unhandled Rejection: ${reason}`);
+  process.exit(1);
+});
+
+process.on('uncaughtException', (error) => {
+  logger.error(`Uncaught Exception: ${error}`);
+  process.exit(1);
+});
+
 (async () => {
   try {
-    logger.info('🚧 Starting app...');
-
+    logger.info('💉 Starting dependency injection');
     await injectDependencies();
+    logger.info('Loaded dependencies on container');
 
-    const port = process.env.NODE_PORT ?? '3000';
-    await new Server(port, new Logger('Server')).listen();
+    logger.info('Creating Server instance');
+    const server = new Server({
+      port: process.env.NODE_PORT ?? '3000',
+      logger: new Logger('Server'),
+    });
+    await server.listen();
   } catch (error) {
     logger.error(error);
     process.exit(1);
