@@ -25,7 +25,7 @@ process.on('uncaughtException', (error) => {
       port: process.env.NODE_PORT ?? '3000',
       logger: new Logger('Server'),
     });
-    await server.listen();
+    await server.run();
   } catch (error) {
     logger.error(error);
     process.exit(1);

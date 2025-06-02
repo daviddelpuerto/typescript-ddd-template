@@ -36,11 +36,9 @@ export class Server {
     this.express.use(helmet.hidePoweredBy());
     this.express.use(helmet.frameguard({ action: 'deny' }));
     this.express.use(compress());
-
     this.express.use(loggerMiddleware);
 
     this.express.use(this.router);
-    this.registerRoutes();
   }
 
   private async registerRoutes(): Promise<void> {
@@ -59,7 +57,8 @@ export class Server {
     this.logger.info('✔️  Application routes have been registered');
   }
 
-  listen(): Promise<void> {
+  async run(): Promise<void> {
+    await this.registerRoutes();
     return new Promise((resolve) => {
       this.httpServer = this.express.listen(this.port, () => {
         this.logger.info(`🚀 Server listening on port: [${this.port}]`);
